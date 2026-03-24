@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Envio de Documentos — Loreto Contabilidade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #0F4C81;
+      --brand-light: #E6F1FB;
+      --brand-mid: #185FA5;
+      --text: #1a1a1a;
+      --text-muted: #5F5E5A;
+      --border: rgba(0,0,0,0.12);
+      --bg: #ffffff;
+      --bg2: #F7F8FA;
+      --bg-page: #F0F2F5;
+      --success: #3B6D11;
+      --success-bg: #EAF3DE;
+      --font: 'DM Sans', sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg-page);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .portal-wrap {
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .logo-mark {
+      width: 46px; height: 46px;
+      background: var(--brand);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-mark svg { width: 24px; height: 24px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .header-text h1 { font-size: 15px; font-weight: 500; color: var(--text); letter-spacing: -0.01em; }
+    .header-text p  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 0 0 8px 2px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── Fields ── */
+    .field { margin-bottom: 1rem; }
+    .field:last-child { margin-bottom: 0; }
+    .field label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
+    .field input {
+      width: 100%; height: 40px;
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0 12px;
+      font-size: 14px;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .field input:focus { border-color: var(--brand-mid); box-shadow: 0 0 0 3px rgba(24,95,165,0.10); }
+    .field input::placeholder { color: #B4B2A9; }
+    .required { color: #E24B4A; margin-left: 2px; }
+
+    /* ── Drop zone ── */
+    .drop-zone {
+      border: 1px dashed rgba(0,0,0,0.18);
+      border-radius: 10px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: var(--bg2);
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--brand-mid);
+      background: var(--brand-light);
+    }
+    .drop-zone input[type=file] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer;
+      width: 100%; height: 100%;
+    }
+    .drop-icon {
+      width: 38px; height: 38px;
+      margin: 0 auto 10px;
+      background: var(--brand-light);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .drop-icon svg { width: 20px; height: 20px; stroke: var(--brand); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .drop-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .drop-sub   { font-size: 12px; color: var(--text-muted); }
+    .drop-sub span { color: var(--brand-mid); font-weight: 500; }
+
+    /* ── File list ── */
+    .file-list { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .file-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+    .file-badge {
+      font-size: 10px; font-weight: 500;
+      border-radius: 4px; padding: 2px 6px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      flex-shrink: 0;
+    }
+    .badge-pdf  { background: #FAECE7; color: #993C1D; }
+    .badge-xml  { background: #E6F1FB; color: #185FA5; }
+    .badge-xls, .badge-xlsx { background: #EAF3DE; color: #3B6D11; }
+    .badge-csv  { background: #FAEEDA; color: #854F0B; }
+    .badge-other{ background: #F1EFE8; color: #5F5E5A; }
+    .file-name  { font-size: 13px; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-size  { font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+    .file-remove{
+      background: none; border: none; cursor: pointer;
+      padding: 2px 5px; color: #B4B2A9;
+      font-size: 18px; line-height: 1;
+      flex-shrink: 0; border-radius: 4px;
+    }
+    .file-remove:hover { color: #E24B4A; background: #FCEBEB; }
+
+    /* ── Info row ── */
+    .info-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 12px;
+      background: var(--brand-light);
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    .info-row svg { width: 14px; height: 14px; stroke: var(--brand-mid); fill: none; stroke-width: 2; flex-shrink: 0; margin-top: 1px; }
+    .info-row p  { font-size: 12px; color: var(--brand-mid); line-height: 1.55; }
+
+    /* ── Progress ── */
+    .progress-wrap  { display: none; margin-bottom: 10px; }
+    .progress-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-bar   { height: 100%; background: var(--brand); border-radius: 2px; width: 0%; transition: width .3s ease; }
+    .progress-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; text-align: right; }
+
+    /* ── Button ── */
+    .btn-submit {
+      width: 100%; height: 46px;
+      background: var(--brand); color: #fff;
+      border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: background .15s, transform .1s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-submit:hover   { background: var(--brand-mid); }
+    .btn-submit:active  { transform: scale(0.99); }
+    .btn-submit:disabled{ background: #B4B2A9; cursor: not-allowed; }
+    .btn-submit svg { width: 16px; height: 16px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── Status bar ── */
+    .status-bar {
+      display: none; align-items: center; gap: 10px;
+      padding: 12px 16px; border-radius: 10px;
+      margin-top: 1rem; font-size: 13px; font-weight: 500;
+    }
+    .status-bar.loading { display: flex; background: #F1EFE8; color: #444441; }
+    .status-bar.success { display: flex; background: var(--success-bg); color: var(--success); }
+    .status-bar.error   { display: flex; background: #FCEBEB; color: #A32D2D; }
+    .status-bar svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid #D3D1C7; border-top-color: #444441;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Footer ── */
+    .footer { text-align: center; margin-top: 2rem; font-size: 12px; color: var(--text-muted); }
+    .footer strong { color: var(--text); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<div class="portal-wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    </div>
+    <div class="header-text">
+      <h1>Portal de envio de documentos</h1>
+      <p>Loreto Contabilidade — Setor Fiscal</p>
+    </div>
+  </div>
+
+  <!-- Identificação -->
+  <p class="section-label">Identificação</p>
+  <div class="card">
+    <div class="field">
+      <label>Nome da empresa <span class="required">*</span></label>
+      <input type="text" id="empresa" placeholder="Ex: Comércio Silva Ltda" autocomplete="organization">
+    </div>
+    <div class="field">
+      <label>Responsável pelo envio <span class="required">*</span></label>
+      <input type="text" id="responsavel" placeholder="Nome completo" autocomplete="name">
+    </div>
+  </div>
+
+  <!-- Documentos -->
+  <p class="section-label">Documentos</p>
+  <div class="card">
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" multiple accept=".pdf,.xml,.xls,.xlsx,.csv,.txt,.zip,.rar">
+      <div class="drop-icon">
+        <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+      </div>
+      <p class="drop-title">Arraste arquivos ou clique para selecionar</p>
+      <p class="drop-sub">Aceita <span>PDF, XML, XLS, XLSX, CSV</span> e outros formatos</p>
+    </div>
+
+    <div class="file-list" id="fileList"></div>
+
+    <div class="info-row">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p>Os arquivos serão salvos no Google Drive e uma notificação será enviada automaticamente para o setor fiscal.</p>
+    </div>
+  </div>
+
+  <!-- Progresso -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <p class="progress-label" id="progressLabel">Enviando...</p>
+  </div>
+
+  <!-- Botão -->
+  <button class="btn-submit" id="btnSubmit" onclick="handleSubmit()">
+    <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    Enviar documentos
+  </button>
+
+  <!-- Status -->
+  <div class="status-bar" id="statusBar"></div>
+
+  <div class="footer">
+    Dúvidas? Entre em contato com o <strong>Setor Fiscal — Loreto Contabilidade</strong>
+  </div>
+
+</div>
+
+<script>
+  // ✅ URL do Google Apps Script já configurada
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqyM0wYIjWNzYWXKF1T1Yl2pRVpamC-kUNooIRLFQkHEkL0zSrP1AjwxKWMdJaVixrNg/exec';
+
+  let selectedFiles = [];
+
+  const dropZone  = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  const fileList  = document.getElementById('fileList');
+
+  function getExt(name) {
+    const p = name.split('.');
+    return p.length > 1 ? p.pop().toLowerCase() : 'outro';
+  }
+  function fmtSize(b) {
+    if (b < 1024) return b + 'B';
+    if (b < 1048576) return (b / 1024).toFixed(1) + 'KB';
+    return (b / 1048576).toFixed(1) + 'MB';
+  }
+  function badgeClass(ext) {
+    const m = { pdf:'badge-pdf', xml:'badge-xml', xls:'badge-xls', xlsx:'badge-xlsx', csv:'badge-csv' };
+    return m[ext] || 'badge-other';
+  }
+
+  function renderFiles() {
+    fileList.innerHTML = '';
+    selectedFiles.forEach(function(f, i) {
+      const ext = getExt(f.name);
+      const el = document.createElement('div');
+      el.className = 'file-item';
+      el.innerHTML =
+        '<span class="file-badge ' + badgeClass(ext) + '">' + ext + '</span>' +
+        '<span class="file-name">' + f.name + '</span>' +
+        '<span class="file-size">' + fmtSize(f.size) + '</span>' +
+        '<button class="file-remove" onclick="removeFile(' + i + ')" title="Remover">×</button>';
+      fileList.appendChild(el);
+    });
+  }
+
+  function removeFile(i) { selectedFiles.splice(i, 1); renderFiles(); }
+
+  function addFiles(files) {
+    Array.from(files).forEach(function(f) {
+      if (!selectedFiles.find(function(x){ return x.name === f.name && x.size === f.size; }))
+        selectedFiles.push(f);
+    });
+    renderFiles();
+  }
+
+  fileInput.addEventListener('change', function(e) { addFiles(e.target.files); fileInput.value = ''; });
+  dropZone.addEventListener('dragover',  function(e) { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', function()  { dropZone.classList.remove('drag-over'); });
+  dropZone.addEventListener('drop',      function(e) { e.preventDefault(); dropZone.classList.remove('drag-over'); addFiles(e.dataTransfer.files); });
+
+  function showStatus(type, msg) {
+    const bar = document.getElementById('statusBar');
+    bar.className = 'status-bar ' + type;
+    if (type === 'loading') {
+      bar.innerHTML = '<div class="spinner"></div><span>' + msg + '</span>';
+    } else if (type === 'success') {
+      bar.innerHTML = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>' + msg + '</span>';
+    } else {
+      bar.innerHTML = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>' + msg + '</span>';
+    }
+  }
+
+  function handleSubmit() {
+    const empresa    = document.getElementById('empresa').value.trim();
+    const responsavel= document.getElementById('responsavel').value.trim();
+    const btn        = document.getElementById('btnSubmit');
+
+    if (!empresa)    { showStatus('error', 'Preencha o nome da empresa.');     document.getElementById('empresa').focus();     return; }
+    if (!responsavel){ showStatus('error', 'Preencha o nome do responsável.'); document.getElementById('responsavel').focus(); return; }
+    if (selectedFiles.length === 0) { showStatus('error', 'Selecione ao menos um arquivo para enviar.'); return; }
+
+    btn.disabled = true;
+    showStatus('loading', 'Enviando arquivos, aguarde...');
+
+    const pw = document.getElementById('progressWrap');
+    const pb = document.getElementById('progressBar');
+    const pl = document.getElementById('progressLabel');
+    pw.style.display = 'block';
+
+    const formData = new FormData();
+    formData.append('empresa', empresa);
+    formData.append('responsavel', responsavel);
+    selectedFiles.forEach(function(f) { formData.append('files', f); });
+
+    let pct = 0;
+    const interval = setInterval(function() {
+      pct = Math.min(pct + Math.random() * 14, 88);
+      pb.style.width = pct + '%';
+      pl.textContent = Math.round(pct) + '% enviado...';
+    }, 400);
+
+    fetch(SCRIPT_URL, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        clearInterval(interval);
+        pb.style.width = '100%';
+        pl.textContent = '100% concluído';
+        if (data.status === 'ok') {
+          setTimeout(function() {
+            pw.style.display = 'none';
+            showStatus('success', selectedFiles.length + ' arquivo(s) enviado(s) com sucesso. O setor fiscal foi notificado!');
+            btn.disabled = false;
+            selectedFiles = [];
+            fileList.innerHTML = '';
+            document.getElementById('empresa').value = '';
+            document.getElementById('responsavel').value = '';
+          }, 600);
+        } else {
+          throw new Error(data.message || 'Erro no envio');
+        }
+      })
+      .catch(function(err) {
+        clearInterval(interval);
+        pw.style.display = 'none';
+        showStatus('error', 'Falha ao enviar. Tente novamente ou contate o setor fiscal.');
+        btn.disabled = false;
+        console.error(err);
+      });
+  }
+</script>
+
+</body>
+</html>
